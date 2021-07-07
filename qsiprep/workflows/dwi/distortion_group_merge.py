@@ -238,6 +238,7 @@ def init_distortion_group_merge_wf(merging_strategy, inputs_list, hmc_model, rep
         (gtab_t1, outputnode, [('gradient_file', 'gradient_table_t1')]),
 
         # Connections for the interactive report
+
         (distortion_merger, interactive_report_wf, [
             ('merged_raw_dwi', 'inputnode.raw_dwi_file'),
             ('out_dwi', 'inputnode.processed_dwi_file'),

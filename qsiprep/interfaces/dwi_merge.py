@@ -143,6 +143,7 @@ class AveragePEPairsInputSpec(MergeDWIsInputSpec):
 
 class AveragePEPairsOutputSpec(MergeDWIsOutputSpec):
     merged_raw_concatenated = File(exists=True)
+    merged_carpetplot_data = File(exists=True)
 
 
 class AveragePEPairs(SimpleInterface):
@@ -166,16 +167,17 @@ class AveragePEPairs(SimpleInterface):
         # Find which images should be averaged together in the o
         # Also, average the carpetplot matrices and motion params
         image_pairs, averaged_raw_bvec = find_image_pairs(original_bvecs, bvals, assignments)
-        combined_images, combined_raw_images, combined_bvals, \
-            combined_bvecs, error_report, avg_carpetplot = average_image_pairs(
-                image_pairs,
-                self.inputs.dwi_files,
-                rotated_bvecs,
-                bvals,
-                self.inputs.denoising_confounds,
-                self.inputs.raw_concatenated_files,
-                self.inputs.carpetplot_data,
-                verbose=self.inputs.verbose)
+        combined_images, combined_raw_images, combined_bvals, combined_bvecs, error_report, \
+        avg_carpetplot = average_image_pairs(
+            image_pairs,
+            self.inputs.dwi_files,
+            rotated_bvecs,
+            bvals,
+            self.inputs.denoising_confounds,
+            self.inputs.raw_concatenated_files,
+            self.inputs.carpetplot_data,
+            verbose=self.inputs.verbose)
+
 
         # Save the averaged outputs
         out_dwi_path = op.join(runtime.cwd, "averaged_pairs.nii.gz")
@@ -321,7 +323,7 @@ def average_image_pairs(image_pairs, image_paths, rotated_bvecs, bvals, confound
 
     # Original file is actually two files!
     averaged_confounds['original_file'] = averaged_confounds[
-        ['original_file_1', 'original_file_2']].agg('+'.join, axis=1)
+        ['original_file_1', 'original_file_2']].agg('+'.join, axis=1)  
 
     # Get the averaged carpetplot data for the interactive report
     averaged_carpetplot = average_carpetplots(carpetplots, np.array(image_pairs))
